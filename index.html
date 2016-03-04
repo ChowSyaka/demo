@@ -1,0 +1,178 @@
+<meta charset="UTF-8">
+<style>
+	#canvans{
+		width:850px;
+		height:450px;
+		background:#Fcfcfc;
+		margin:0px auto;
+		position: relative;
+	}
+	.btn-con{
+		width:850px;
+		margin:20px auto;
+	}
+	.arrlist{
+		position:absolute;
+		bottom:0px;
+		background:#999;
+		border:#333 1px solid;
+
+	}
+	
+	*{ margin:0; padding:0;}
+
+	.pass{ background-color:#F00;}
+	.change{ background-color:#0F3;}
+	.changeEnd{ background-color:#FF0;}
+	.maxed{ background-color:#0016FF;}
+	.dbb{ background-color:#F2FF00;}
+
+</style>
+<div id="canvans">
+	
+</div>
+<div class="btn-con">
+	<input type="button" id="BubbleSort" value="冒泡排序">
+	<input type="button" id="SelectionSort" value="选择排序">
+	<input type="button" id="Quicksort" value="快速排序">
+	<input type="button" id="InsertionSort" value="插入排序">
+</div>
+<script src="jquery.js"></script>
+<script>
+	var randomArr = [];
+	getRandom(); 
+	var time2;
+	$("#BubbleSort").on("click",function(){
+		getRandom(); 
+		var j ,arrlength = randomArr.length;
+		var timeDo = function(){
+				if(arrlength > 0){
+					j = 0;
+					time2 = window.setInterval(function() { //每0.5秒循环一次
+			            if (j < arrlength - 1) {
+			                changeDiv(j,"pass",randomArr[j]); //改变当前DIV的背景颜色
+			                if (randomArr[j] > randomArr[j + 1]) { //比较当前与下一个数的大小  如果大于则替换
+			                    var tempExchangVal = randomArr[j];
+			                    randomArr[j] = randomArr[j + 1];
+			                    randomArr[j + 1] = tempExchangVal;
+			                    
+			                    //DIV改变动画
+			                    changeDiv(j, "change", randomArr[j]); 
+			                    changeDiv(j + 1, "changed", tempExchangVal);
+			                }
+			                j++;
+			            } else {
+			                window.clearInterval(time2);
+			                removeBoxColor();
+			                arrlength--;
+			                timeDo();
+			            }
+			        }, 50);
+		        }else{
+		        	console.log(randomArr);
+		        	doEnd(randomArr);
+		        }
+
+		}
+		timeDo();
+	})
+	
+
+	$("#SelectionSort").on("click",function(){
+		window.clearInterval(time2);
+		getRandom(); 
+		var arrlength = randomArr.length;
+		
+		var i = arrlength - 1;
+		var timeDo = function(){
+			if(i>0){
+				var max = i;
+				var j = 0;
+				time2 = window.setInterval(function() {
+					changeDiv(j,"dbb",randomArr[j]);
+		            changeDiv(max,"maxed",randomArr[max]);
+		            if(i>j){
+		            	console.log("i="+i);
+		            	var ds=j+1;
+		            	console.log("j="+ds);
+		            	if (randomArr[j] > randomArr[max]){
+
+			                var tempExchangVal = randomArr[j];
+					        randomArr[j] = randomArr[max];
+					        randomArr[max] = tempExchangVal;
+				            changeDiv(j,"change",randomArr[j]);
+				            changeDiv(max, "changed", tempExchangVal);
+				            // $(".arrlist").removeClass("dbb");
+				            
+			            }
+			            j++;
+		            }else{
+		            	window.clearInterval(time2);
+		                removeBoxColor();
+		                i--; 
+		                timeDo();
+		            }
+				},50)
+			}else{
+				doEnd(randomArr);
+			}
+		}
+	   	timeDo();
+	});
+
+
+	$("#Quicksort").on("click",function(){
+		window.clearInterval(time2);
+		getRandom(); 
+		
+	})
+	function changeDiv(indexs,className,height){
+		$(".arrlist").eq(indexs).addClass(className).height(height);
+	}
+	
+	function removeBoxColor(){
+		$(".arrlist").removeClass(" pass change changed maxed dbb")
+	}
+
+	//结束动画
+	function doEnd(arr) {
+	    removeBoxColor();
+	    var i = 0;
+	    var time = window.setInterval(function() {
+	        if (i >= arr.length) {
+	            window.clearInterval(time);
+	        }
+	        $(".arrlist").eq(i).addClass("change").next().addClass("pass");
+	        i++;
+	    }, 50);
+	}
+
+	function bubble(){  //冒泡算法主体
+		for(i=0;i<=randomArr.length;i++){
+			
+			if(randomArr[i]>randomArr[i+1]){
+				var nt = randomArr[i];
+				randomArr[i] = randomArr[i+1];
+				randomArr[i+1] = nt;
+			}
+		}
+	}
+
+	function getRandom() {  //获取随机数组并生成div
+		$("#canvans").html("");
+		randomArr = [];
+		for(var i=0;i<20;i++){
+			var randomHeight =Math.floor(Math.random()*19+ 1)*10;
+			var newDiv= $("<div class='arrlist'></div>");
+			newDiv.css({
+				width: "41.5",
+				height: randomHeight,
+				left: i*42.5
+			});
+			$("#canvans").append(newDiv);
+			randomArr.push(randomHeight);
+		}
+		
+	  		
+	}
+</script>
